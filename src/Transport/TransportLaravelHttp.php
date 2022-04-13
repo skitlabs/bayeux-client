@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Skitlabs\Bayeux\Http;
+namespace Skitlabs\Bayeux\Transport;
 
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Http\Client\PendingRequest;
 use Skitlabs\Bayeux\Authentication\Authentication;
+use Skitlabs\Bayeux\Message\Message;
 
-final class HttpClientLaravel implements HttpClient
+final class TransportLaravelHttp implements Transport
 {
     private string $baseUrl;
     private Authentication $authentication;
@@ -19,9 +20,13 @@ final class HttpClientLaravel implements HttpClient
         $this->cookieJar = new CookieJar();
     }
 
-    public function post(string $url, array $data) : array
+    public function send(string $url, Message ... $messages): array
     {
-        return $this->client()->post($url, $data)->json();
+        return $this->client()
+            ->post(
+                $url,
+                array_map(static fn (Message $message) => $message->asArray(), $messages)
+            )->json();
     }
 
     private function client() : PendingRequest

@@ -2,15 +2,15 @@
 
 namespace Skitlabs\Bayeux\State;
 
-use Skitlabs\Bayeux\Bayeux;
 use Skitlabs\Bayeux\Context;
 use Skitlabs\Bayeux\Message\MessageConnect;
+use Skitlabs\Bayeux\Transport\Transport;
 
 class StateConnect extends State
 {
-    public function process(Bayeux $client, Context $context) : State
+    public function process(Transport $transport, Context $context) : State
     {
-        $response = $client->send('/meta/connect', new MessageConnect());
+        $response = $transport->send('/meta/connect', new MessageConnect($context));
 
         $interval = (int) ($response['0']['advice']['interval'] ?? 0);
         $advisedState = $response['0']['advice']['reconnect'] ?? 'retry';

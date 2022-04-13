@@ -2,8 +2,8 @@
 
 namespace Skitlabs\Bayeux\State;
 
-use Skitlabs\Bayeux\Bayeux;
 use Skitlabs\Bayeux\Context;
+use Skitlabs\Bayeux\Transport\Transport;
 
 class StateProcessing extends State
 {
@@ -14,7 +14,7 @@ class StateProcessing extends State
         $this->messages = $messages;
     }
 
-    public function process(Bayeux $client, Context $context) : State
+    public function process(Transport $transport, Context $context) : State
     {
         foreach ($this->messages as $message) {
             try {

@@ -2,8 +2,8 @@
 
 namespace Skitlabs\Bayeux\State;
 
-use Skitlabs\Bayeux\Bayeux;
 use Skitlabs\Bayeux\Context;
+use Skitlabs\Bayeux\Transport\Transport;
 
 class StateSleep extends State
 {
@@ -16,7 +16,7 @@ class StateSleep extends State
         $this->next = $next;
     }
 
-    public function process(Bayeux $client, Context $context) : State
+    public function process(Transport $transport, Context $context) : State
     {
         sleep($this->seconds);
 

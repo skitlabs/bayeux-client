@@ -2,8 +2,8 @@
 
 namespace Skitlabs\Bayeux\State;
 
-use Skitlabs\Bayeux\Bayeux;
 use Skitlabs\Bayeux\Context;
+use Skitlabs\Bayeux\Transport\Transport;
 
 class StateDisconnected extends State
 {
@@ -14,7 +14,7 @@ class StateDisconnected extends State
         $this->reason = $reason;
     }
 
-    public function process(Bayeux $client, Context $context) : State
+    public function process(Transport $transport, Context $context) : State
     {
         return new StateHandshake();
     }

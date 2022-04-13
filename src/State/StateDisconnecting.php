@@ -2,10 +2,10 @@
 
 namespace Skitlabs\Bayeux\State;
 
-use Skitlabs\Bayeux\Bayeux;
 use Skitlabs\Bayeux\Context;
 use Skitlabs\Bayeux\Message\MessageDisconnect;
 use Skitlabs\Bayeux\Message\MessageUnSubscribe;
+use Skitlabs\Bayeux\Transport\Transport;
 
 class StateDisconnecting extends State
 {
@@ -16,17 +16,17 @@ class StateDisconnecting extends State
         $this->reason = $reason;
     }
 
-    public function process(Bayeux $client, Context $context) : State
+    public function process(Transport $transport, Context $context) : State
     {
         $messages = [];
 
         foreach ($context->channels() as $channel) {
-            $messages[] = new MessageUnsubscribe($channel);
+            $messages[] = new MessageUnsubscribe($channel, $context);
         }
 
-        $client->send('/meta/unsubscribe', ... $messages);
+        $transport->send('/meta/unsubscribe', ... $messages);
 
-        $client->send('/meta/disconnect', new MessageDisconnect());
+        $transport->send('/meta/disconnect', new MessageDisconnect($context));
 
         return new StateDisconnected($this->reason);
     }

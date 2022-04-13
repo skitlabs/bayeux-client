@@ -2,21 +2,21 @@
 
 namespace Skitlabs\Bayeux\State;
 
-use Skitlabs\Bayeux\Bayeux;
 use Skitlabs\Bayeux\Context;
 use Skitlabs\Bayeux\Message\MessageSubscribe;
+use Skitlabs\Bayeux\Transport\Transport;
 
 class StateSubscribe extends State
 {
-    public function process(Bayeux $client, Context $context) : State
+    public function process(Transport $transport, Context $context) : State
     {
         $messages = [];
 
         foreach ($context->channels() as $channel) {
-            $messages[] = new MessageSubscribe($channel);
+            $messages[] = new MessageSubscribe($channel, $context);
         }
 
-        $client->send('/meta/subscribe', ... $messages);
+        $transport->send('/meta/subscribe', ... $messages);
 
         return new StateConnect();
     }
