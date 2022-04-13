@@ -32,4 +32,9 @@ final class TransportLogging implements Transport
 
         return $response;
     }
+
+    public function forceAuthenticate() : void
+    {
+        $this->original->forceAuthenticate();
+    }
 }

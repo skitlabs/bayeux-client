@@ -45,6 +45,11 @@ final class TransportGuzzle implements Transport
         return json_decode($response->getBody()->getContents(), true, JSON_THROW_ON_ERROR);
     }
 
+    public function forceAuthenticate() : void
+    {
+        $this->authentication->reset();
+    }
+
     private function client() : Client
     {
         if (! $this->client) {

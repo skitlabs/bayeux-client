@@ -29,6 +29,11 @@ final class TransportLaravelHttp implements Transport
             )->json();
     }
 
+    public function forceAuthenticate() : void
+    {
+        $this->authentication->reset();
+    }
+
     private function client() : PendingRequest
     {
         return (new PendingRequest)

@@ -14,7 +14,7 @@ class StateConnect extends State
 
         $interval = (int) ($response['0']['advice']['interval'] ?? 0);
         $advisedState = $response['0']['advice']['reconnect'] ?? 'retry';
-        if ($interval > 0) {
+        if ($interval > 0 || $advisedState === 'handshake') {
             return new StateSleep(
                 $interval,
                 match ($advisedState) {
