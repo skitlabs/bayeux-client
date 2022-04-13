@@ -2,6 +2,7 @@
 
 namespace Skitlabs\Bayeux;
 
+use Closure;
 use Psr\Log\LoggerInterface;
 use Skitlabs\Bayeux\Http\HttpClient;
 use Skitlabs\Bayeux\Message\Message;
@@ -12,30 +13,38 @@ use Skitlabs\Bayeux\State\StateHandshake;
 class Bayeux
 {
     private HttpClient $http;
-    private LoggerInterface $logger;
+    private ?LoggerInterface $logger;
     private State $state;
 
-    private array $channels = [];
+    /** @var array<array-key, Closure> */
+    private array $subscriptions = [];
     private string $clientId = '';
 
-    public function __construct(HttpClient $http, LoggerInterface $logger)
+    public function __construct(HttpClient $http, ?LoggerInterface $logger = null)
     {
         $this->http = $http;
         $this->logger = $logger;
         $this->state = new StateHandshake();
     }
 
-    public function subscribe(string ... $channels) : self
+    /** Subscribe to a channel, and handle all events through the given callback. */
+    public function subscribe(string $channel, Closure $closure) : self
     {
-        $this->channels = array_unique(array_merge($this->channels, $channels));
+        $this->subscriptions[$channel] = $closure;
 
         return $this;
     }
 
-    /** @return array<array-key, string> */
+    /** @return array<array-key, Closure> */
     public function subscriptions() : array
     {
-        return $this->channels;
+        return $this->subscriptions;
+    }
+
+    /** @return array<array-key, string> */
+    public function channels() : array
+    {
+        return array_keys($this->subscriptions);
     }
 
     public function setClientId(string $clientId) : void
@@ -47,11 +56,11 @@ class Bayeux
     {
         do {
             try {
-                $this->logger->info($this->state::class);
+                $this->logger?->debug($this->state::class);
 
                 $this->state = $this->state->process($this);
             } catch (\Throwable $e) {
-                $this->logger->critical($e->getMessage());
+                $this->logger?->critical($e->getMessage());
 
                 $this->state = new StateDisconnected($e->getMessage());
             }
@@ -62,11 +71,11 @@ class Bayeux
     {
         $messages = array_map(fn (Message $message) => $message->setClientId($this->clientId)->asArray(), $messages);
 
-        $this->logger->debug($url, $messages);
+        $this->logger?->debug($url, $messages);
 
         $response = $this->http->post($url, $messages);
 
-        $this->logger->debug($url, $response);
+        $this->logger?->debug($url, $response);
 
         return $response;
     }

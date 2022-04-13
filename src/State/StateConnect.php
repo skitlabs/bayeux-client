@@ -24,6 +24,6 @@ class StateConnect extends State
             );
         }
 
-        return new StateConnect();
+        return new StateProcessing($response);
     }
 }

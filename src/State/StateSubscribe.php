@@ -7,18 +7,11 @@ use Skitlabs\Bayeux\Message\MessageSubscribe;
 
 class StateSubscribe extends State
 {
-    private array $channels;
-
-    public function __construct(array $channels)
-    {
-        $this->channels = $channels;
-    }
-
     public function process(Bayeux $client) : State
     {
         $messages = [];
 
-        foreach ($this->channels as $channel) {
+        foreach ($client->channels() as $channel) {
             $messages[] = new MessageSubscribe($channel);
         }
 

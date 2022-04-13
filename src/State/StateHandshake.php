@@ -19,6 +19,6 @@ class StateHandshake extends State
 
         $client->setClientId($clientId);
 
-        return new StateSubscribe($client->subscriptions());
+        return new StateSubscribe();
     }
 }
