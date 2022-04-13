@@ -14,51 +14,37 @@ class Bayeux
 {
     private HttpClient $http;
     private ?LoggerInterface $logger;
+    private Context $context;
     private State $state;
-
-    /** @var array<array-key, Closure> */
-    private array $subscriptions = [];
-    private string $clientId = '';
 
     public function __construct(HttpClient $http, ?LoggerInterface $logger = null)
     {
         $this->http = $http;
         $this->logger = $logger;
+        $this->context = new Context();
         $this->state = new StateHandshake();
     }
 
     /** Subscribe to a channel, and handle all events through the given callback. */
     public function subscribe(string $channel, Closure $closure) : self
     {
-        $this->subscriptions[$channel] = $closure;
+        $this->context->subscribe($channel, $closure);
 
         return $this;
     }
 
-    /** @return array<array-key, Closure> */
-    public function subscriptions() : array
-    {
-        return $this->subscriptions;
-    }
-
-    /** @return array<array-key, string> */
-    public function channels() : array
-    {
-        return array_keys($this->subscriptions);
-    }
-
-    public function setClientId(string $clientId) : void
-    {
-        $this->clientId = $clientId;
-    }
-
+    /**
+     * Start the main event loop; handshake, wait for message, process, and repeat.
+     * Note that this method is _blocking_ and will only return once disconnected
+     * from the remote server.
+     */
     public function start() : void
     {
         do {
             try {
                 $this->logger?->debug($this->state::class);
 
-                $this->state = $this->state->process($this);
+                $this->state = $this->state->process($this, $this->context);
             } catch (\Throwable $e) {
                 $this->logger?->critical($e->getMessage());
 
@@ -69,7 +55,7 @@ class Bayeux
 
     public function send(string $url, Message ... $messages) : array
     {
-        $messages = array_map(fn (Message $message) => $message->setClientId($this->clientId)->asArray(), $messages);
+        $messages = array_map(fn (Message $message) => $message->withContext($this->context)->asArray(), $messages);
 
         $this->logger?->debug($url, $messages);
 

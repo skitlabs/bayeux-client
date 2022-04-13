@@ -2,8 +2,8 @@
 
 namespace Skitlabs\Bayeux\State;
 
-use Closure;
 use Skitlabs\Bayeux\Bayeux;
+use Skitlabs\Bayeux\Context;
 
 class StateProcessing extends State
 {
@@ -14,15 +14,13 @@ class StateProcessing extends State
         $this->messages = $messages;
     }
 
-    public function process(Bayeux $client) : State
+    public function process(Bayeux $client, Context $context) : State
     {
         foreach ($this->messages as $message) {
             try {
                 $channel = (string) ($message['channel'] ?? '');
-                $subscriber = $client->subscriptions()[$channel] ?? static function () {};
-                if ($subscriber instanceof Closure) {
-                    $subscriber($message);
-                }
+
+                $context->subscriber($channel)($message);
             } catch (\Throwable $e) {
                 // Keep processing other messages
             }

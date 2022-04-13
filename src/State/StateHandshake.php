@@ -3,11 +3,12 @@
 namespace Skitlabs\Bayeux\State;
 
 use Skitlabs\Bayeux\Bayeux;
+use Skitlabs\Bayeux\Context;
 use Skitlabs\Bayeux\Message\MessageHandshake;
 
 class StateHandshake extends State
 {
-    public function process(Bayeux $client) : State
+    public function process(Bayeux $client, Context $context) : State
     {
         $response = $client->send('/meta/handshake', new MessageHandshake());
 
@@ -17,7 +18,7 @@ class StateHandshake extends State
             return new StateDisconnected('Failed to retrieve clientId');
         }
 
-        $client->setClientId($clientId);
+        $context->setClientId($clientId);
 
         return new StateSubscribe();
     }

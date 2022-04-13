@@ -3,6 +3,7 @@
 namespace Skitlabs\Bayeux\State;
 
 use Skitlabs\Bayeux\Bayeux;
+use Skitlabs\Bayeux\Context;
 
 class StateSleep extends State
 {
@@ -15,7 +16,7 @@ class StateSleep extends State
         $this->next = $next;
     }
 
-    public function process(Bayeux $client) : State
+    public function process(Bayeux $client, Context $context) : State
     {
         sleep($this->seconds);
 

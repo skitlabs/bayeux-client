@@ -3,11 +3,12 @@
 namespace Skitlabs\Bayeux\State;
 
 use Skitlabs\Bayeux\Bayeux;
+use Skitlabs\Bayeux\Context;
 use Skitlabs\Bayeux\Message\MessageConnect;
 
 class StateConnect extends State
 {
-    public function process(Bayeux $client) : State
+    public function process(Bayeux $client, Context $context) : State
     {
         $response = $client->send('/meta/connect', new MessageConnect());
 

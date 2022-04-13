@@ -3,15 +3,16 @@
 namespace Skitlabs\Bayeux\State;
 
 use Skitlabs\Bayeux\Bayeux;
+use Skitlabs\Bayeux\Context;
 use Skitlabs\Bayeux\Message\MessageSubscribe;
 
 class StateSubscribe extends State
 {
-    public function process(Bayeux $client) : State
+    public function process(Bayeux $client, Context $context) : State
     {
         $messages = [];
 
-        foreach ($client->channels() as $channel) {
+        foreach ($context->channels() as $channel) {
             $messages[] = new MessageSubscribe($channel);
         }
 

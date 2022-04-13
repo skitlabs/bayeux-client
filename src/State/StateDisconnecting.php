@@ -3,6 +3,7 @@
 namespace Skitlabs\Bayeux\State;
 
 use Skitlabs\Bayeux\Bayeux;
+use Skitlabs\Bayeux\Context;
 use Skitlabs\Bayeux\Message\MessageDisconnect;
 use Skitlabs\Bayeux\Message\MessageUnSubscribe;
 
@@ -15,11 +16,11 @@ class StateDisconnecting extends State
         $this->reason = $reason;
     }
 
-    public function process(Bayeux $client) : State
+    public function process(Bayeux $client, Context $context) : State
     {
         $messages = [];
 
-        foreach ($client->subscriptions() as $channel) {
+        foreach ($context->channels() as $channel) {
             $messages[] = new MessageUnsubscribe($channel);
         }
 

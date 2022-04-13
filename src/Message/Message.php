@@ -5,6 +5,7 @@ namespace Skitlabs\Bayeux\Message;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Ramsey\Uuid\Uuid;
+use Skitlabs\Bayeux\Context;
 
 class Message
 {
@@ -22,16 +23,11 @@ class Message
         ], $properties);
     }
 
-    public function setClientId(string $clientId) : self
+    public function withContext(Context $context) : self
     {
-        $this->properties['clientId'] = $clientId;
+        $this->properties = array_merge($this->properties, ['clientId' => $context->clientId()]);
 
         return $this;
-    }
-
-    public function toArray(array $overrides) : array
-    {
-        return array_merge($this->properties, $overrides);
     }
 
     public function asArray() : array
