@@ -4,13 +4,11 @@ namespace Skitlabs\Bayeux\Message;
 
 class MessageDisconnect extends Message
 {
-    protected ?string $clientId;
-    protected string $channel = '/meta/disconnect';
-
     public function __construct(string $clientId)
     {
-        parent::__construct();
-
-        $this->clientId = $clientId;
+        parent::__construct([
+            'channel' => '/meta/disconnect',
+            'clientId' => $clientId,
+        ]);
     }
 }

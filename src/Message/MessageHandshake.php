@@ -4,6 +4,11 @@ namespace Skitlabs\Bayeux\Message;
 
 class MessageHandshake extends Message
 {
-    protected string $channel = '/meta/handshake';
-    protected array $supportedConnectionTypes = ['long-polling'];
+    public function __construct()
+    {
+        parent::__construct([
+            'channel' => '/meta/handshake',
+            'supportedConnectionTypes' => ['long-polling'],
+        ]);
+    }
 }

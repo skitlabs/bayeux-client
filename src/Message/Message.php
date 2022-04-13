@@ -6,39 +6,24 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Ramsey\Uuid\Uuid;
 
-abstract class Message
+class Message
 {
-    protected string $channel = '/meta/connect';
-    protected string $version = '1.0';
-    protected string $minimumVersion = '1.0';
-    protected ?string $clientId = null;
-    protected string $id;
-    protected string $timestamp;
+    protected array $properties = [];
 
-    public function __construct()
+    public function __construct(array $properties = [])
     {
-        $this->id = Uuid::uuid4()->toString();
-        $this->timestamp = (new DateTimeImmutable())->format(DateTimeInterface::ATOM);
+        $this->properties = array_merge([
+            'channel' => '/meta/connect',
+            'version' => '1.0',
+            'minimumVersion' => '1.0',
+            'clientId' => '',
+            'id' => Uuid::uuid4()->toString(),
+            'timestamp' => (new DateTimeImmutable())->format(DateTimeInterface::ATOM),
+        ], $properties);
     }
 
     public function asArray() : array
     {
-        $ref = new \ReflectionClass($this);
-
-        $properties = [];
-        foreach ($ref->getProperties() as $property) {
-            if ($property->isPrivate()) {
-                continue;
-            }
-
-            $value = $property->getValue($this);
-            if (! $value) {
-                continue;
-            }
-
-            $properties[$property->getName()] = $value;
-        }
-
-        return $properties;
+        return $this->properties;
     }
 }
