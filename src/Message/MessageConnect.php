@@ -4,12 +4,11 @@ namespace Skitlabs\Bayeux\Message;
 
 class MessageConnect extends Message
 {
-    public function __construct(string $clientId)
+    public function __construct()
     {
         parent::__construct([
             'channel' => '/meta/connect',
             'connectionType' => 'long-polling',
-            'clientId' => $clientId,
         ]);
     }
 }

@@ -7,16 +7,9 @@ use Skitlabs\Bayeux\Message\MessageConnect;
 
 class StateConnect extends State
 {
-    private readonly string $clientId;
-
-    public function __construct(string $clientId)
-    {
-        $this->clientId = $clientId;
-    }
-
     public function process(Bayeux $client) : State
     {
-        $response = $client->send('/meta/connect', new MessageConnect($this->clientId));
+        $response = $client->send('/meta/connect', new MessageConnect());
 
         $interval = (int) ($response['0']['advice']['interval'] ?? 0);
         $advisedState = $response['0']['advice']['reconnect'] ?? 'retry';
@@ -25,12 +18,12 @@ class StateConnect extends State
                 $interval,
                 match ($advisedState) {
                     'handshake' => new StateHandshake(),
-                    'retry' => new StateConnect($this->clientId),
-                    default => new StateDisconnecting($this->clientId, 'Failed to handle advisedState: ' . $advisedState),
+                    'retry' => new StateConnect(),
+                    default => new StateDisconnecting('Failed to handle advisedState: ' . $advisedState),
                 },
             );
         }
 
-        return new StateConnect($this->clientId);
+        return new StateConnect();
     }
 }

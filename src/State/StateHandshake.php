@@ -17,6 +17,8 @@ class StateHandshake extends State
             return new StateDisconnected('Failed to retrieve clientId');
         }
 
-        return new StateSubscribe($clientId, $client->subscriptions());
+        $client->setClientId($clientId);
+
+        return new StateSubscribe($client->subscriptions());
     }
 }

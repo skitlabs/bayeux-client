@@ -4,12 +4,11 @@ namespace Skitlabs\Bayeux\Message;
 
 class MessageUnSubscribe extends Message
 {
-    public function __construct(string $clientId, string $subscription)
+    public function __construct(string $subscription)
     {
         parent::__construct([
             'channel' => '/meta/unsubscribe',
             'subscription' => $subscription,
-            'clientId' => $clientId,
         ]);
     }
 }

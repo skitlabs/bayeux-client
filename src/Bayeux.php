@@ -13,6 +13,7 @@ class Bayeux
     private HttpClient $http;
     private State $state;
     private array $channels = [];
+    private string $clientId = '';
 
     public function __construct(HttpClient $http)
     {
@@ -33,6 +34,11 @@ class Bayeux
         return $this->channels;
     }
 
+    public function setClientId(string $clientId) : void
+    {
+        $this->clientId = $clientId;
+    }
+
     public function start() : void
     {
         do {
@@ -49,14 +55,11 @@ class Bayeux
 
     public function send(string $url, Message ... $messages) : array
     {
-        $messagesArray = [];
-        foreach ($messages as $message) {
-            $messagesArray[] = $message->asArray();
-        }
+        $messages = array_map(fn (Message $message) => $message->setClientId($this->clientId)->asArray(), $messages);
 
-        dump(date("[Y-m-d H:i:s]") . ' ' . $url . ' ' . json_encode($messagesArray, JSON_THROW_ON_ERROR));
+        dump(date("[Y-m-d H:i:s]") . ' ' . $url . ' ' . json_encode($messages, JSON_THROW_ON_ERROR));
 
-        $response = $this->http->post($url, $messagesArray);
+        $response = $this->http->post($url, $messages);
 
         dump(date("[Y-m-d H:i:s]") . ' ' . $url . ' ' . json_encode($response, JSON_THROW_ON_ERROR));
 

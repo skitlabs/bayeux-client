@@ -22,6 +22,18 @@ class Message
         ], $properties);
     }
 
+    public function setClientId(string $clientId) : self
+    {
+        $this->properties['clientId'] = $clientId;
+
+        return $this;
+    }
+
+    public function toArray(array $overrides) : array
+    {
+        return array_merge($this->properties, $overrides);
+    }
+
     public function asArray() : array
     {
         return $this->properties;

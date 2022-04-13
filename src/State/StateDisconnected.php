@@ -3,8 +3,6 @@
 namespace Skitlabs\Bayeux\State;
 
 use Skitlabs\Bayeux\Bayeux;
-use Skitlabs\Bayeux\Http\HttpClient;
-use Skitlabs\Bayeux\Message\MessageHandshake;
 
 class StateDisconnected extends State
 {

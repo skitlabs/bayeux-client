@@ -8,12 +8,10 @@ use Skitlabs\Bayeux\Message\MessageUnSubscribe;
 
 class StateDisconnecting extends State
 {
-    public readonly string $clientId;
     private string $reason;
 
-    public function __construct(string $clientId, string $reason)
+    public function __construct(string $reason)
     {
-        $this->clientId = $clientId;
         $this->reason = $reason;
     }
 
@@ -22,12 +20,12 @@ class StateDisconnecting extends State
         $messages = [];
 
         foreach ($client->subscriptions() as $channel) {
-            $messages[] = new MessageUnsubscribe($this->clientId, $channel);
+            $messages[] = new MessageUnsubscribe($channel);
         }
 
         $client->send('/meta/unsubscribe', ... $messages);
 
-        $client->send('/meta/disconnect', new MessageDisconnect($this->clientId));
+        $client->send('/meta/disconnect', new MessageDisconnect());
 
         return new StateDisconnected($this->reason);
     }

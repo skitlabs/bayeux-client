@@ -3,18 +3,14 @@
 namespace Skitlabs\Bayeux\State;
 
 use Skitlabs\Bayeux\Bayeux;
-use Skitlabs\Bayeux\Http\HttpClient;
-use Skitlabs\Bayeux\Message\MessageHandshake;
 use Skitlabs\Bayeux\Message\MessageSubscribe;
 
 class StateSubscribe extends State
 {
-    private readonly string $clientId;
     private array $channels;
 
-    public function __construct(string $clientId, array $channels)
+    public function __construct(array $channels)
     {
-        $this->clientId = $clientId;
         $this->channels = $channels;
     }
 
@@ -23,11 +19,11 @@ class StateSubscribe extends State
         $messages = [];
 
         foreach ($this->channels as $channel) {
-            $messages[] = new MessageSubscribe($this->clientId, $channel);
+            $messages[] = new MessageSubscribe($channel);
         }
 
         $client->send('/meta/subscribe', ... $messages);
 
-        return new StateConnect($this->clientId);
+        return new StateConnect();
     }
 }

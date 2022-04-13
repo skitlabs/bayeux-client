@@ -3,7 +3,6 @@
 namespace Skitlabs\Bayeux\State;
 
 use Skitlabs\Bayeux\Bayeux;
-use Skitlabs\Bayeux\Http\HttpClient;
 
 abstract class State
 {
