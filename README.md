@@ -22,7 +22,7 @@ $  composer install skitlabs/bayeux-client
 require_once './vendor/autoload.php';
 
 $bayeux = new \Skitlabs\Bayeux\Client\Bayeux(
-    new \Skitlabs\Bayeux\Transport\TransportLaravelHttp(
+    new \Skitlabs\Bayeux\Transport\TransportGuzzle(
         'https://organization.my.salesforce.com/cometd/54.0/',
         new \Skitlabs\Bayeux\Authentication\AuthenticationOAuthTokenLaravelHttp(
             'https://organization.my.salesforce.com',
@@ -52,6 +52,10 @@ require_once './vendor/autoload.php';
 
 \Skitlabs\Bayeux\Transport\Decorator\TransportLogging::decorate($transport, $logging)
 ```
+
+### Laravel
+Using Laravel, and don't want to depend on Guzzle directly?   
+Simply replace `\Skitlabs\Bayeux\Transport\TransportGuzzle` with `\Skitlabs\Bayeux\Transport\TransportLaravelHttp`.
 
 ### Blocking
 Note that, once start has been called, the script will continuously loop; until disconnected by the remote server.
