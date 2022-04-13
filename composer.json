@@ -1,0 +1,26 @@
+{
+    "name": "skitlabs/bayeux",
+    "type": "library",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Jurre Vriezinga",
+            "email": "j.vriezinga@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Skitlabs\\Bayeux\\": "src/"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.0",
+        "orchestra/testbench": "^7.4",
+        "illuminate/http": "^9.8",
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "ramsey/uuid": "^4.3"
+    }
+}
