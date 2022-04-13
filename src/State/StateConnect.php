@@ -13,18 +13,13 @@ class StateConnect extends State
         $response = $transport->send('/meta/connect', new MessageConnect($context));
 
         $interval = (int) ($response['0']['advice']['interval'] ?? 0);
-        $advisedState = $response['0']['advice']['reconnect'] ?? 'retry';
-        if ($interval > 0 || $advisedState === 'handshake') {
-            return new StateSleep(
-                $interval,
-                match ($advisedState) {
-                    'handshake' => new StateHandshake(),
-                    'retry' => new StateConnect(),
-                    default => new StateDisconnecting('Failed to handle advisedState: ' . $advisedState),
-                },
-            );
-        }
+        $advisedState = (string) ($response['0']['advice']['reconnect'] ?? 'processing');
 
-        return new StateProcessing($response);
+        return match ($advisedState) {
+            'handshake' => new StateHandshake(),
+            'retry' => new StateSleep($interval, new StateConnect()),
+            'processing' => new StateProcessing($response),
+            default => new StateDisconnecting('Failed to handle advisedState: ' . $advisedState),
+        };
     }
 }
