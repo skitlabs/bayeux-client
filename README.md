@@ -10,6 +10,7 @@ $  composer install skitlabs/bayeux-client
 
 ### Requirements
 * PHP 8.1
+* Compatible HTTP-client (`guzzlehttp/guzzle: ^7.4` or `illuminate/http: ^9.8`)
 
 ## Usage
 1. Create a client by setting up a (HTTP) transport, and an Authentication provider.
