@@ -15,18 +15,16 @@
     },
     "minimum-stability": "stable",
     "suggest": {
-        "guzzlehttp/guzzle": "For use with Guzzle Transport / Auth",
-        "illuminate/http": "For use with Laravel HTTP Transport / Auth"
+        "ext-redis": "For use with redis persistence in the ReplayId Extension"
     },
     "require": {
         "php": "^8.1",
         "ramsey/uuid": "^4.3",
-        "psr/log": "^3.0"
+        "psr/log": "^3.0",
+        "guzzlehttp/guzzle": "^7.4"
     },
     "require-dev": {
         "symfony/var-dumper": "^6.0",
-        "guzzlehttp/guzzle": "^7.4",
-        "monolog/monolog": "^2.5",
-        "illuminate/http": "^9.8"
+        "monolog/monolog": "^2.5"
     }
 }

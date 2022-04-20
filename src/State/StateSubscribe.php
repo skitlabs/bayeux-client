@@ -16,7 +16,8 @@ class StateSubscribe extends State
             $messages[] = new MessageSubscribe($channel, $context);
         }
 
-        $transport->send('/meta/subscribe', ... $messages);
+        $response = $this->send($transport, $context, '/meta/subscribe', ... $messages);
+        //$transport->send('/meta/subscribe', ... $messages);
 
         return new StateConnect();
     }

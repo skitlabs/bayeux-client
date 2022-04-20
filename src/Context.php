@@ -3,12 +3,15 @@
 namespace Skitlabs\Bayeux;
 
 use Closure;
+use Skitlabs\Bayeux\Extension\Extension;
 
 class Context
 {
     private string $clientId = '';
     /** @var array<string, Closure> */
     private array $subscriptions = [];
+    /** @var array<array-key, Extension> */
+    private array $extensions = [];
 
     public function subscribe(string $channel, Closure $closure) : void
     {
@@ -18,6 +21,16 @@ class Context
     public function subscriber(string $channel) : Closure
     {
         return $this->subscriptions[$channel] ?? static function () : void {};
+    }
+
+    public function extend(Extension $extension) : void
+    {
+        $this->extensions[] = $extension;
+    }
+
+    public function extensions() : array
+    {
+        return $this->extensions;
     }
 
     /** @return array<array-key, string> */

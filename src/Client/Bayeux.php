@@ -4,6 +4,7 @@ namespace Skitlabs\Bayeux\Client;
 
 use Closure;
 use Skitlabs\Bayeux\Context;
+use Skitlabs\Bayeux\Extension\Extension;
 use Skitlabs\Bayeux\State\State;
 use Skitlabs\Bayeux\State\StateDisconnected;
 use Skitlabs\Bayeux\State\StateHandshake;
@@ -30,12 +31,22 @@ class Bayeux
         return $this;
     }
 
+    public function extend(Extension ... $extensions) : self
+    {
+        foreach ($extensions as $extension) {
+            $this->context->extend($extension);
+        }
+
+        return $this;
+    }
+
     public function start() : void
     {
         do {
             try {
                 $this->state = $this->state->process($this->transport, $this->context);
             } catch (Throwable $e) {
+                dd($e);
                 $this->state = new StateDisconnected($e->getMessage());
             }
         } while (! $this->state->isDisconnected());

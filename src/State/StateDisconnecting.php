@@ -24,9 +24,11 @@ class StateDisconnecting extends State
             $messages[] = new MessageUnsubscribe($channel, $context);
         }
 
-        $transport->send('/meta/unsubscribe', ... $messages);
+        $this->send($transport, $context, '/meta/unsubscribe', ... $messages);
+        //$transport->send('/meta/unsubscribe', ... $messages);
 
-        $transport->send('/meta/disconnect', new MessageDisconnect($context));
+        $this->send($transport, $context, '/meta/disconnect', new MessageDisconnect($context));
+        //$transport->send('/meta/disconnect', new MessageDisconnect($context));
 
         return new StateDisconnected($this->reason);
     }

@@ -10,7 +10,9 @@ $  composer install skitlabs/bayeux-client
 
 ### Requirements
 * PHP 8.1
-* Compatible HTTP-client (`guzzlehttp/guzzle: ^7.4` or `illuminate/http: ^9.8`)
+* guzzlehttp/guzzle
+* psr/log
+* ramsey/uuid
 
 ## Usage
 1. Create a client by setting up a (HTTP) transport, and an Authentication provider.
@@ -41,7 +43,7 @@ $bayeux->subscribe('/data/ChangeEvents', static function (array $message) : void
 ```
 
 ### Logging
-If you want to log all out- and incoming messages, wrap the `Transport` in the included `TransportLogging`-decorator.
+If you want to log all outgoing and incoming messages, wrap the `Transport` in the included `TransportLogging`-decorator.
 
 ```php
 <?php declare(strict_types=1);
@@ -54,10 +56,6 @@ require_once './vendor/autoload.php';
 \Skitlabs\Bayeux\Transport\Decorator\TransportLogging::decorate($transport, $logging)
 ```
 
-### Laravel
-Using Laravel, and don't want to depend on Guzzle directly?   
-Simply replace `\Skitlabs\Bayeux\Transport\TransportGuzzle` with `\Skitlabs\Bayeux\Transport\TransportLaravelHttp` and `\Skitlabs\Bayeux\Authentication\AuthenticationOAuthTokenGuzzle` with `\Skitlabs\Bayeux\Authentication\AuthenticationOAuthTokenLaravelHttp`.
-
 ### Blocking
 Note that, once start has been called, the script will continuously loop; until disconnected by the remote server.
 This means that the entire process is waiting for messages, and further execution is halted.   
@@ -68,3 +66,61 @@ This means that the entire process is waiting for messages, and further executio
 Once a disconnect occurs, script execution will continue beyond `start`. This client will never attempt to reconnect.   
 If you wish to automatically restart after a disconnect, consider setting up a watchman/supervisord process.
 
+### Extensions
+After creating a client, any number of extensions may be added. This package includes;
+
+#### ReplayId
+The `replayId`-property may be used to track the last processed message for a channel.   
+This value can later be used to retrieve messages that occurred while te client wasn't listening.
+
+```php
+<?php declare(strict_types=1);
+
+/** 
+ * @var \Skitlabs\Bayeux\Client\Bayeux $client
+ * @var \Skitlabs\Bayeux\Extension\Replay\Persistence\Persistence $persistence 
+ */
+$client->extend(new \Skitlabs\Bayeux\Extension\Replay\ExtensionReplayId($persistence));
+```
+
+##### Persistence
+By default, the `replayId` for each channel will only be tracked in (volatile) memory. If the script terminates, so does the cache.   
+Use one of the following modules to persist, or create your own;
+
+###### File based
+Using this module, the `replayId` for each channel will be tracked in a `json`-document on the local filesystem.
+
+```php
+<?php declare(strict_types=1);
+
+// Keep track of replayIds in the file `replayId.json` in the current directory.
+new \Skitlabs\Bayeux\Extension\Replay\Persistence\FilePersistence('replayId.json');
+```
+
+###### Redis
+Using this module, the `replayId` for each channel will be tracked in Redis.
+
+```php
+<?php declare(strict_types=1);
+
+$client = new \Redis();
+$client->connect('127.0.0.1', 6379);
+
+new \Skitlabs\Bayeux\Extension\Replay\Persistence\RedisPersistence($client);
+```
+
+###### Make your own
+Add your own module, by implementing the `Skitlabs\Bayeux\Extension\Replay\Persistence\Persistence` interface.
+
+#### SalesForce Error Logger 
+Use this extension to track SalesForce errors, communicated through the `sfdc`-key.
+
+```php
+<?php declare(strict_types=1);
+
+/** 
+ * @var \Skitlabs\Bayeux\Client\Bayeux $client
+ * @var \Psr\Log\LoggerInterface $logger 
+ */
+$client->extend(new \Skitlabs\Bayeux\Extension\SalesForce\SalesForceErrorLoggingExtension($logger));
+```

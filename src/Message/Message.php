@@ -25,6 +25,27 @@ class Message
         $this->withContext($context);
     }
 
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        return $this->properties[$key] ?? $default;
+    }
+
+    public function extend(string $extension, array $properties) : void
+    {
+        $this->properties['ext'] ??= [];
+
+        $this->properties['ext'][$extension] = $properties;
+    }
+
+    public function isMeta(?string $channel = null) : bool
+    {
+        if (! str_starts_with($this->get('channel', ''), '/meta/')) {
+            return false;
+        }
+
+        return str_ends_with($this->get('channel'), '/' . $channel);
+    }
+
     public function asArray() : array
     {
         return $this->properties;
