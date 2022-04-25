@@ -11,7 +11,6 @@ class StateConnect extends State
     public function process(Transport $transport, Context $context) : State
     {
         $response = $this->send($transport, $context, '/meta/connect', new MessageConnect($context));
-        //$response = $transport->send('/meta/connect', new MessageConnect($context));
 
         $interval = (int) ($response['0']['advice']['interval'] ?? 0);
         $advisedState = (string) ($response['0']['advice']['reconnect'] ?? 'processing');

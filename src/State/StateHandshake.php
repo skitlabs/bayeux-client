@@ -14,7 +14,6 @@ class StateHandshake extends State
     public function process(Transport $transport, Context $context) : State
     {
         $response = $this->send($transport, $context, '/meta/handshake', new MessageHandshake($context));
-        //$response = $transport->send('/meta/handshake', new MessageHandshake($context));
 
         $successful = $response['0']['successful'] ?? false;
         $clientId = (string) ($response['0']['clientId'] ?? '');

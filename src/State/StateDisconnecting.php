@@ -25,10 +25,8 @@ class StateDisconnecting extends State
         }
 
         $this->send($transport, $context, '/meta/unsubscribe', ... $messages);
-        //$transport->send('/meta/unsubscribe', ... $messages);
 
         $this->send($transport, $context, '/meta/disconnect', new MessageDisconnect($context));
-        //$transport->send('/meta/disconnect', new MessageDisconnect($context));
 
         return new StateDisconnected($this->reason);
     }

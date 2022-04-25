@@ -21,7 +21,7 @@ class StateProcessing extends State
                 $channel = (string) ($message['channel'] ?? '');
 
                 $context->subscriber($channel)($message);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 // Keep processing other messages
             }
         }
