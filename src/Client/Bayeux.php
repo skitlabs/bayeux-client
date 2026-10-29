@@ -46,7 +46,6 @@ class Bayeux
             try {
                 $this->state = $this->state->process($this->transport, $this->context);
             } catch (Throwable $e) {
-                dd($e);
                 $this->state = new StateDisconnected($e->getMessage());
             }
         } while (! $this->state->isDisconnected());

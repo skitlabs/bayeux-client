@@ -21,10 +21,10 @@
         "php": "^8.1",
         "ramsey/uuid": "^4.3",
         "psr/log": "^3.0",
-        "guzzlehttp/guzzle": "^7.4"
+        "guzzlehttp/guzzle": "^7.4 || ^8.0"
     },
     "require-dev": {
-        "symfony/var-dumper": "^6.0",
-        "monolog/monolog": "^2.5"
+        "symfony/var-dumper": "^8.1",
+        "monolog/monolog": "^3.12"
     }
 }
